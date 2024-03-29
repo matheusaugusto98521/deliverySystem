@@ -1,6 +1,7 @@
 package com.example.deliverySystem.controller;
 
 import com.example.deliverySystem.entitys.Order;
+import com.example.deliverySystem.entitys.OrderItems;
 import com.example.deliverySystem.services.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +22,8 @@ public class OrderController {
     }
 
     @PostMapping("/create-order")
-    public ResponseEntity<Order> createOrder(@RequestBody Order order){
-        Order newOrder = this.service.createOrder(order);
+    public ResponseEntity<Order> createOrder(){
+        Order newOrder = this.service.createOrder();
 
         return ResponseEntity.ok().body(newOrder);
     }
@@ -60,6 +61,26 @@ public class OrderController {
             return ResponseEntity.ok().body(order);
         }catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrderById(@PathVariable Long id){
+        try{
+            Order order = this.service.getOrderById(id);
+            return ResponseEntity.ok().body(order);
+        }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{idOrder}/delete")
+    public ResponseEntity<?> deleteOrder(@PathVariable Long idOrder){
+        try{
+            this.service.deleteOrder(idOrder);
+            return ResponseEntity.ok().build();
+        }catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERRO: " + e.getMessage());
         }
     }
 

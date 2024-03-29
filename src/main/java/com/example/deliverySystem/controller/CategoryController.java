@@ -4,6 +4,7 @@ package com.example.deliverySystem.controller;
 import com.example.deliverySystem.DTO.CategoryDTO;
 import com.example.deliverySystem.customExceptions.CategoryNotFoundException;
 import com.example.deliverySystem.entitys.Category;
+import com.example.deliverySystem.entitys.Product;
 import com.example.deliverySystem.services.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,7 @@ public class CategoryController {
             Category getCat = this.categoryService.getCategoryById(id);
             return ResponseEntity.status(HttpStatus.OK).body(getCat);
         }catch (CategoryNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Categoria não encontrada: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERRO: " + e.getMessage());
         }
     }
 
@@ -64,6 +65,16 @@ public class CategoryController {
         }catch(CategoryNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao deletar categoria: " +
                     e.getMessage());
+        }
+    }
+
+    @GetMapping("/{idCategory}/products-by-category")
+    public ResponseEntity<?> getProdsByCategory(@PathVariable Long idCategory){
+        try{
+            List<Product> products = this.categoryService.getProductsByCategory(idCategory);
+            return ResponseEntity.ok().body(products);
+        }catch (CategoryNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERRO: " + e.getMessage());
         }
     }
 

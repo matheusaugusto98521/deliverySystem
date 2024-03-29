@@ -2,6 +2,7 @@ package com.example.deliverySystem.entitys;
 
 
 import com.example.deliverySystem.DTO.CategoryDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

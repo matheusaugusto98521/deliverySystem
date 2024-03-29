@@ -1,11 +1,13 @@
 package com.example.deliverySystem.entitys;
 
 import com.example.deliverySystem.DTO.ProductDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_products")
@@ -19,13 +21,14 @@ public class Product {
     private String description;
     private BigDecimal price;
 
-    private String image;
-
     @ManyToOne
+    @JoinColumn(name = "category_id")
+    @JsonIgnore
     private Category category;
 
-    @ManyToOne
-    private OrderItems orderItem;
+    @OneToMany(mappedBy = "product")
+    @JsonIgnore
+    private List<OrderItems> orderItem;
 
     public Product(ProductDTO productDTO){
         this.description = productDTO.description();

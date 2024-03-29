@@ -21,23 +21,35 @@ public class OrderService {
     private IOrderRepository orderRepository;
     private IOrderItemsRepository orderItemsRepository;
 
-    public OrderService(IOrderRepository orderRepository, IOrderItemsRepository orderItemsRepository){
+    private OrderItemService itemService;
+
+    public OrderService(IOrderRepository orderRepository, IOrderItemsRepository orderItemsRepository, OrderItemService itemService){
         this.orderRepository = orderRepository;
         this.orderItemsRepository = orderItemsRepository;
+        this.itemService = itemService;
     }
 
-    public Order createOrder(@RequestBody Order order){
-            return orderRepository.save(order);
+    public Order createOrder(){
+        Order order = new Order();
+        order = orderRepository.save(order);
+
+        List<OrderItems> items = this.itemService.getAll();
+        for(OrderItems item : items){
+            item.setOrder(order);
+        }
+
+        order.setOrderItems(items);
+        return orderRepository.save(order);
     }
     //mostrar pedido
     public List<Order> displayOrder(){
         return orderRepository.findAll();
     }
 
+
     //calcular total do pedido
     public BigDecimal calculateOrder(Long idOrder){
-        Order order = this.orderRepository.findById(idOrder).orElseThrow(
-                () -> new RuntimeException("Pedido não encontardo"));
+        Order order = getOrderById(idOrder);
 
         BigDecimal total = BigDecimal.ZERO;
         List<OrderItems> orderItems = order.getOrderItems();
@@ -51,8 +63,7 @@ public class OrderService {
     }
 
     public Order addItemToListExists(Long idOrder,Long idOrderItem){
-        Order order = this.orderRepository.findById(idOrder).orElseThrow(()
-        -> new RuntimeException("Pedido não encontrado"));
+        Order order = getOrderById(idOrder);
 
         OrderItems orderItem = orderItemsRepository.findById(idOrderItem).orElseThrow(()
         -> new RuntimeException("Item não encontrado"));
@@ -66,6 +77,7 @@ public class OrderService {
         if(existsItem.isPresent()){
             OrderItems itemUpdate = existsItem.get();
             itemUpdate.setQuantity(itemUpdate.getQuantity() + 1);
+            itemUpdate.setValueItem();
         }else{
             itemsExists.add(orderItem);
         }
@@ -76,11 +88,21 @@ public class OrderService {
     }
 
     public Order alterateOrder(Long id, Order orderUpdated){
-        Order order = this.orderRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("Pedido não encontrado"));
+        Order order = getOrderById(id);
 
         order.setOrderItems(orderUpdated.getOrderItems());
         return this.orderRepository.save(order);
+    }
+
+    public void deleteOrder(Long id){
+        Order order = getOrderById(id);
+
+        this.orderRepository.delete(order);
+    }
+
+    public Order getOrderById(Long id){
+        return this.orderRepository.findById(id).orElseThrow(()
+                -> new RuntimeException("Pedido não encontrado"));
     }
 
 

@@ -34,18 +34,7 @@ class OrderServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    void testCreateOrder() {
-        long orderId = 1L;
-        Order order = new Order();
-        order.setId(orderId);
 
-        when(orderRepository.save(any(Order.class))).thenReturn(order);
-        Order result = orderService.createOrder(order);
-
-        assertEquals(order, result);
-        verify(orderRepository, times(1)).save(any(Order.class));
-    }
 
     @Test
     void testDisplayOrder() {
@@ -73,7 +62,7 @@ class OrderServiceTest {
 
         List<Product> products = Arrays.asList(product);
 
-        OrderItemDTO data = new OrderItemDTO(null, products,2, BigDecimal.valueOf(5.5));
+        OrderItemDTO data = new OrderItemDTO(2, BigDecimal.valueOf(5.5));
         OrderItems item1 = new OrderItems(data);
         OrderItems item2 = new OrderItems(data);
 

@@ -35,17 +35,16 @@ class ProductControllerTest {
 
     @Test
     void createProduct() {
-        MultipartFile image = null;
         ProductDTO productDTO = new ProductDTO("Fame 1", BigDecimal.valueOf(28.5));
         Product outputProduct = new Product();
 
-        when(productService.createProduct(productDTO, image)).thenReturn(outputProduct);
-        ResponseEntity<?> responseEntity = productController.createProduct(productDTO, image);
+        when(productService.createProduct(productDTO)).thenReturn(outputProduct);
+        ResponseEntity<?> responseEntity = productController.createProduct(productDTO);
 
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(outputProduct, responseEntity.getBody());
 
-        verify(productService, times(1)).createProduct(productDTO, image);
+        verify(productService, times(1)).createProduct(productDTO);
 
     }
 }

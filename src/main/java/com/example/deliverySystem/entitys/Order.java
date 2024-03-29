@@ -1,5 +1,6 @@
 package com.example.deliverySystem.entitys;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 

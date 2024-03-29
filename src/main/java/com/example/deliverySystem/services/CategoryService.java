@@ -28,48 +28,33 @@ public class CategoryService {
     }
 
     public Category alterateCategory(Long id, @RequestBody CategoryDTO categoryDTO) throws CategoryNotFoundException {
-        Optional<Category> optionalCategory = this.categoryRepository.findById(id);
-
-        if(optionalCategory.isPresent()) {
-            Category category = optionalCategory.get();
-            if (!categoryDTO.description().isEmpty()) {
-                category.setDescription(categoryDTO.description());
-                category = this.categoryRepository.save(category);
-            }
-            return category;
-        }else{
-            throw new CategoryNotFoundException("Categoria não encontrada");
-        }
+        Category category = getCategoryById(id);
+        category.setDescription(categoryDTO.description());
+        return this.categoryRepository.save(category);
     }
 
 
     public void deleteCategory(long id) throws CategoryNotFoundException {
-        Category category = this.categoryRepository.findById(id);
-        if(category != null){
-            this.categoryRepository.delete(category);
-        }else{
-            throw new CategoryNotFoundException("Categoria não encontrada");
-        }
+        Category category = getCategoryById(id);
+        this.categoryRepository.delete(category);
     }
 
     public List<Category> displayAllCategories(){
         return this.categoryRepository.findAll();
     }
 
-    public Category getCategoryById(long id) throws CategoryNotFoundException {
-        Category category = this.categoryRepository.findById(id);
-
-        if (category != null){
-            return category;
-        }else{
-            throw new CategoryNotFoundException("Categoria não encontrada");
-        }
+    public Category getCategoryById(Long id) throws CategoryNotFoundException {
+        return this.categoryRepository.findById(id).orElseThrow(()
+        -> new CategoryNotFoundException("Categoria não encontrada"));
     }
 
     public List<Product> getProductsByCategory(Long id) throws CategoryNotFoundException {
-        Category category = this.categoryRepository.findById(id).orElseThrow(() ->
-                new CategoryNotFoundException("Categoria não encontrada"));
-
+        Category category = getCategoryById(id);
         return category.getProduct();
     }
+
+    public void saveCategory(Category category){
+        this.categoryRepository.save(category);
+    }
 }
+

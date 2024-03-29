@@ -49,54 +49,14 @@ class ProductServiceTest {
 
     @Test
     void testCreateProduct() {
-        MultipartFile image = new MultipartFile() {
-            @Override
-            public String getName() {
-                return null;
-            }
 
-            @Override
-            public String getOriginalFilename() {
-                return null;
-            }
-
-            @Override
-            public String getContentType() {
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public long getSize() {
-                return 0;
-            }
-
-            @Override
-            public byte[] getBytes() throws IOException {
-                return new byte[0];
-            }
-
-            @Override
-            public InputStream getInputStream() throws IOException {
-                return null;
-            }
-
-            @Override
-            public void transferTo(File dest) throws IOException, IllegalStateException {
-
-            }
-        };
         ProductDTO productDTO = new ProductDTO("Fame 1", BigDecimal.valueOf(28.5));
         Product inputProduct = new Product(productDTO);
 
 
         when(productRepository.save(any(Product.class))).thenReturn(inputProduct);
 
-        Product createdProduct = productService.createProduct(productDTO, image);
+        Product createdProduct = productService.createProduct(productDTO);
 
         assertNotNull(createdProduct);
         assertEquals(inputProduct.getDescription(), createdProduct.getDescription());
@@ -201,7 +161,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void testAssignCategory(){
+    void testAssignCategory() throws CategoryNotFoundException {
         Product product = new Product();
         Category category = new Category();
         Long prodId = 1L;

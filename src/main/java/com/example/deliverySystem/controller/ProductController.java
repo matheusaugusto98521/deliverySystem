@@ -1,6 +1,7 @@
 package com.example.deliverySystem.controller;
 
 import com.example.deliverySystem.DTO.ProductDTO;
+import com.example.deliverySystem.customExceptions.CategoryNotFoundException;
 import com.example.deliverySystem.entitys.Product;
 import com.example.deliverySystem.services.ProductService;
 import org.springframework.http.HttpStatus;
@@ -23,9 +24,9 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productData, @RequestParam("image")MultipartFile image){
-        Product newProduct = this.productService.createProduct(productData, image);
+    @PostMapping("/create/")
+    public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productData){
+        Product newProduct = this.productService.createProduct(productData);
         return ResponseEntity.ok().body(newProduct);
     }
 
@@ -70,6 +71,18 @@ public class ProductController {
         try{
             Product result = productService.searchByName(name);
             return ResponseEntity.status(HttpStatus.OK).body(result);
+        }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERRO: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{idPro}/assign-category/{idCategory}")
+    public ResponseEntity<?> assignCategory(@PathVariable Long idPro, @PathVariable Long idCategory){
+        try{
+            Product product = this.productService.assignCategory(idPro, idCategory);
+            return ResponseEntity.ok().body(product);
+        }catch (CategoryNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERRO: " + e.getMessage());
         }catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERRO: " + e.getMessage());
         }
