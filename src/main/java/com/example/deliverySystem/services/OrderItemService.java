@@ -53,5 +53,4 @@ public class OrderItemService {
         return this.repository.findById(idItem).orElseThrow(
                 () -> new RuntimeException("Item não encontrado"));
     }
-
 }
