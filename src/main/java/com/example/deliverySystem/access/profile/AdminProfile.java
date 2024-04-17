@@ -1,22 +1,18 @@
 package com.example.deliverySystem.access.profile;
 
 import com.example.deliverySystem.access.authentication.UserAuth;
-import com.example.deliverySystem.access.dto.ProfileUserDTO;
+import com.example.deliverySystem.access.dto.AdminDTO;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_profiles")
+@Table(name = "tb_enterprises")
 @Data
-@NoArgsConstructor
-public class UserProfile implements Serializable {
-
+public class AdminProfile implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -25,20 +21,20 @@ public class UserProfile implements Serializable {
     private UUID id;
 
     private String name;
-    private String document;
-    private Date birthDate;
-    private String email;
+    private String cnpj;
     private String phone;
+
+    @JoinColumn(name = "path_image_profile")
+    private String image;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserAuth userAuth;
 
-    public UserProfile(ProfileUserDTO data){
+    public AdminProfile(AdminDTO data){
         this.name = data.name();
-        this.document = data.document();
-        this.birthDate = data.birthDate();
-        this.email = data.email();
+        this.cnpj = data.cnpj();
         this.phone = data.phone();
+        this.image = data.image();
     }
 }

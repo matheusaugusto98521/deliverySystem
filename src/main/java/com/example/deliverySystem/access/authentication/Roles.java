@@ -1,4 +1,4 @@
-package com.example.deliverySystem.access.profile;
+package com.example.deliverySystem.access.authentication;
 
 import lombok.Data;
 import lombok.Getter;
