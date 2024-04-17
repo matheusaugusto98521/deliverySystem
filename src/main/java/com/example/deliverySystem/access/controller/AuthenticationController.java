@@ -6,7 +6,9 @@ import com.example.deliverySystem.access.dto.*;
 import com.example.deliverySystem.access.profile.AdminProfile;
 import com.example.deliverySystem.access.profile.UserProfile;
 import com.example.deliverySystem.access.repository.IUserAuthRepository;
+import com.example.deliverySystem.access.responseDTO.LoginResponseDTO;
 import com.example.deliverySystem.access.service.UserAuthService;
+import com.example.deliverySystem.infra.security.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,12 +34,16 @@ public class AuthenticationController {
     @Autowired
     UserAuthService service;
 
+    @Autowired
+    private TokenService tokenService;
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid UserDTO data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
-        return ResponseEntity.ok().build();
+        String token = this.tokenService.generateToken((UserAuth) auth.getPrincipal());
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
 
